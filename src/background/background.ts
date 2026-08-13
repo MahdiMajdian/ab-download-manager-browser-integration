@@ -8,7 +8,7 @@ import {addDownload, getHeadersForUrls} from "~/background/actions";
 import {Disposable} from "~/utils/disposable";
 import {keepListeningToEvents} from "~/utils/extension-api";
 import {IS_MV3} from "~/utils/ManifestUtil";
-import {setHoldingKey} from "~/background/BackgroundSharedState";
+import {setShortcutState} from "~/background/BackgroundSharedState";
 import * as Backend from "~/backend/Backend";
 import {DefinedCommands} from "~/message/Commands";
 
@@ -32,7 +32,7 @@ function receiveMessageFromContentScripts() {
         return await getHeadersForUrls(msg.data)
     })
     onMessage(DefinedCommands.SET_HOLDING_KEY, async (msg) => {
-        setHoldingKey(msg.data)
+        setShortcutState(msg.data)
     })
 }
 

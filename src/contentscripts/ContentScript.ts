@@ -35,6 +35,20 @@ function shouldCreatePopup() {
     return lastSelectionConsumed && Configs.getLatestConfig().popupEnabled
 }
 
+function reportShortcutState(event: MouseEvent) {
+    run(async () => {
+        try {
+            await sendMessage(
+                DefinedCommands.SET_HOLDING_KEY,
+                HoldingKeyTracker.getShortcutState(event),
+                "background"
+            )
+        } catch (e) {
+            // ignored
+        }
+    })
+}
+
 run(async () => {
     await Configs.boot()
     mousePosition.boot()
@@ -65,6 +79,12 @@ run(async () => {
         }
     })
 
+    // capture phase, so a page that stops propagation can not hide the shortcut.
+    // reported on mousedown too, because a click can start its download before
+    // the mouse button is released
+    document.addEventListener("mousedown", reportShortcutState, true)
+    document.addEventListener("mouseup", reportShortcutState, true)
+
     document.addEventListener("mousedown", () => {
         showPopupDelayed.cancel()
     })
@@ -88,19 +108,6 @@ run(async () => {
             }
             lastSelectionConsumed = false
             selectionPopup.showAddDownloadPopupUi(mousePositionInPage)
-        })
-        run(async () => {
-            try {
-                await sendMessage(
-                    DefinedCommands.SET_HOLDING_KEY,
-                    HoldingKeyTracker.getHoldingKey(),
-                    "background"
-                )
-            } catch (e) {
-                // ignored
-            } finally {
-                HoldingKeyTracker.clear()
-            }
         })
     })
 

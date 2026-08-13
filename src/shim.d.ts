@@ -3,6 +3,7 @@
 import { ProtocolWithReturn } from "webext-bridge";
 import {DownloadRequestHeaders, DownloadRequestItem} from "~/interfaces/DownloadRequestItem";
 import {DownloadableMedia} from "~/media/MediaOnTab";
+import {ShortcutState} from "~/utils/BypassShortcut";
 
 declare module "webext-bridge" {
     export interface ProtocolMap {
@@ -15,6 +16,6 @@ declare module "webext-bridge" {
         test_native_messaging: ProtocolWithReturn<undefined, boolean>;
         is_app_reachable: ProtocolWithReturn<undefined, boolean>;
         get_headers:ProtocolWithReturn<string[],(DownloadRequestHeaders | null)[]>;
-        set_holding_key: string;
+        set_holding_key: ShortcutState;
     }
 }
