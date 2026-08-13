@@ -160,5 +160,23 @@
   },
   "config_bypass_shortcut_description": {
     "message": "When auto-capture of download links is enabled, holding down the shortcut key and clicking on the download link uses the internal browser download method."
+  },
+  "config_bypass_shortcut_disabled": {
+    "message": "Disabled"
+  },
+  "config_bypass_shortcut_group_modifiers": {
+    "message": "Modifier keys"
+  },
+  "config_bypass_shortcut_group_combinations": {
+    "message": "Modifier combinations"
+  },
+  "config_bypass_shortcut_group_keys": {
+    "message": "Single keys"
+  },
+  "config_bypass_shortcut_warning_mac_control": {
+    "message": "On macOS, holding Control while clicking is a right click, so the browser opens the context menu instead of downloading the link."
+  },
+  "config_bypass_shortcut_warning_shift": {
+    "message": "Holding Shift while clicking a link makes the browser open it in a new window."
   }
 }

@@ -18,6 +18,13 @@ import {isBlank} from "~/utils/StringUtils";
 import AutoGrowingTextarea from "~/optionsui/AutoGrowingTextarea";
 import {DefinedCommands} from "~/message/Commands";
 import {Nullable, WithSetters} from "~/utils/Types";
+import _ from "lodash";
+import {
+    getShortcutPresets,
+    getShortcutWarning,
+    isMacPlatform,
+    NO_SHORTCUT,
+} from "~/utils/BypassShortcut";
 
 class ToolsViewModelEvent {
 }
@@ -395,6 +402,47 @@ function SilentDownloadSection(
     </div>
 }
 
+function BypassShortcutPicker(
+    props: {
+        value: string,
+        setValue: (s: string) => void,
+    }
+) {
+    const isMac = useMemo(() => isMacPlatform(), [])
+    const presets = useMemo(() => getShortcutPresets(isMac), [isMac])
+    const groups = useMemo(() => Object.entries(_.groupBy(presets, p => p.group)), [presets])
+    const warning = getShortcutWarning(props.value, isMac)
+
+    return <div className="flex flex-col space-y-2">
+        <label>{browser.i18n.getMessage("config_bypass_shortcut")}</label>
+        <select
+            value={props.value}
+            onChange={(e) => props.setValue(e.target.value)}
+            className="select select-sm"
+        >
+            <option value={NO_SHORTCUT}>
+                {browser.i18n.getMessage("config_bypass_shortcut_disabled")}
+            </option>
+            {
+                groups.map(([group, items]) => (
+                    <optgroup key={group} label={browser.i18n.getMessage(group)}>
+                        {
+                            items.map((preset) => (
+                                <option key={preset.value} value={preset.value}>{preset.label}</option>
+                            ))
+                        }
+                    </optgroup>
+                ))
+            }
+        </select>
+        {
+            warning && (
+                <div className="text-sm text-warning">{browser.i18n.getMessage(warning)}</div>
+            )
+        }
+    </div>
+}
+
 function AutoCaptureSection(
     props: {
         value: boolean,
@@ -524,19 +572,10 @@ function AutoCaptureSection(
                     </div>
                 </div>
                 <div className="mt-2"/>
-                <div className="flex flex-col space-y-2">
-                    <label>{browser.i18n.getMessage("config_bypass_shortcut")}</label>
-                    <div className="flex items-center space-x-2">
-                        <select
-                            value={props.bypassShortcut}
-                            onChange={(e) => props.setBypassShortcut(e.target.value)}
-                            className="select select-sm flex-1"
-                        >
-                            <option value={"Control"}>Control</option>
-                            <option value={"Delete"}>Delete</option>
-                        </select>
-                    </div>
-                </div>
+                <BypassShortcutPicker
+                    value={props.bypassShortcut}
+                    setValue={props.setBypassShortcut}
+                />
                 <div>{browser.i18n.getMessage("config_bypass_shortcut_description")}</div>
             </div>
         }
